@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cotización de Vehículo - Grupo Roldán</title>
+    <style>
+        /* Estilos generales */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #d32f2f;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            color: #d32f2f;
+            font-size: 1.8em;
+            margin-bottom: 10px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1em;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background-color: #d32f2f;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #b71c1c;
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .comment {
+            margin-top: 20px;
+            font-style: italic;
+            color: #777;
+            text-align: center;
+            background-color: #f1f1f1;
+            padding: 15px;
+            border-radius: 4px;
+            border-left: 4px solid #d32f2f;
+        }
+
+        .advisor-info {
+            margin-top: 30px;
+            border-top: 1px solid #ddd;
+            padding-top: 20px;
+            text-align: center;
+        }
+
+        .advisor-info p {
+            margin: 5px 0;
+            color: #555;
+        }
+
+        .credit-table {
+            margin-top: 20px;
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .credit-table th, .credit-table td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+
+        .credit-table th {
+            background-color: #d32f2f;
+            color: white;
+        }
+
+        .credit-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .tipo-cliente {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .tipo-cliente button {
+            width: 32%;
+            background-color: #e0e0e0;
+            color: #333;
+            border: none;
+            border-radius: 4px;
+            padding: 8px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .tipo-cliente button.selected {
+            background-color: #d32f2f;
+            color: white;
+            transform: scale(1.02);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .tipo-cliente button:hover {
+            background-color: #d32f2f;
+            color: white;
+        }
+
+        button[onclick="generarPreAprobacion()"] {
+            background-color: #4CAF50;
+        }
+
+        button[onclick="generarPreAprobacion()"]:hover {
+            background-color: #45a049;
+        }
+
+        .letra-manual {
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #e8f5e9;
+            border-radius: 4px;
+            border-left: 4px solid #4CAF50;
+        }
+
+        .letra-manual label {
+            color: #2e7d32;
+            font-weight: bold;
+        }
+
+        .letra-manual input {
+            width: 150px;
+            margin-left: 10px;
+        }
+
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            margin: 15px 0;
+        }
+
+        .toggle-label {
+            margin-right: 10px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: #4CAF50;
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(26px);
+        }
+
+        /* Estilos para el modal de WhatsApp */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+        
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 400px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+        }
+        
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .close:hover {
+            color: black;
+        }
+        
+        .modal-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        
+        .modal-buttons button {
+            width: 48%;
+        }
+
+        .phone-input {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .phone-prefix {
+            padding: 10px;
+            background-color: #f1f1f1;
+            border: 1px solid #ccc;
+            border-radius: 4px 0 0 4px;
+            border-right: none;
+        }
+        
+        #whatsappNumber {
+            flex: 1;
+            border-radius: 0 4px 4px 0;
+            padding: 10px;
+            border: 1px solid #ccc;
+        }
+
+        /* Estilo para el nuevo botón de solicitud de crédito */
+        .btn-solicitud-credito {
+            background-color: #2196F3 !important;
+            margin-top: 15px !important;
+        }
+        
+        .btn-solicitud-credito:hover {
+            background-color: #0b7dda !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Grupo Roldán</h1>
+        <form id="vehicleForm">
+            <label for="nombre">Nombre del Cliente:</label>
+            <input type="text" id="nombre" name="nombre" required>
+
+            <label for="cedula">Cédula:</label>
+            <input type="text" id="cedula" name="cedula" required>
+
+            <label for="celular">Celular:</label>
+            <input type="text" id="celular" name="celular" required>
+
+            <label for="modelo">Modelo:</label>
+            <select id="modelo" name="modelo" required>
+                <option value="">Seleccione un modelo</option>
+                <option value="X 50 MT">X 50 MT - $18.990</option>
+                <option value="X 70 MT I 2025">X 70 MT I 2025 - $22.890</option>
+                <option value="X70 MT II 2025">X70 MT II 2025 - $25.690</option>
+                <option value="X70 AT II 2025">X70 AT II 2025 - $26.790</option>
+                <option value="PLUS MT 2025">PLUS MT 2025 - $30.990</option>
+                <option value="PLUS MT Sport 2025">PLUS MT Sport 2025 - $31.390</option>
+                <option value="PLUS 6 DCT 1.5 2025">PLUS 6 DCT 1.5 2025 - $32.990</option>
+                <option value="PLUS 7 DCT 1.6 2023">PLUS 7 DCT 1.6 2023 - $37.890</option>
+                <option value="DASHING MT I 2024">DASHING MT I 2024 - $26.790</option>
+                <option value="DASHING MT II 2025">DASHING MT II 2025 - $28.790</option>
+                <option value="DASHING 6DCT 2024">DASHING 6DCT 2024 - $30.890</option>
+                <option value="DASHING 6DCT 2025">DASHING 6DCT 2025 - $30.890</option>
+                <option value="DASHING 7DCT 2024">DASHING 7DCT 2024 - $37.890</option>
+                <option value="T2">T2 - $53.990</option>
+                <option value="T2 PLOMO MATTE">T2 PLOMO MATTE - $54.990</option>
+                <option value="T2 DAKAR EDITION">T2 DAKAR EDITION - $55.990</option>
+                <option value="KARRY 11 pax 2025">KARRY 11 pax 2025 - $13.890</option>
+                <option value="KARRY Mini Truck CS 25">KARRY Mini Truck CS 25 - $16.890</option>
+                <option value="KARRY Mini Truck CD 25">KARRY Mini Truck CD 25 - $17.890</option>
+                <option value="AUTOMOVIL ELECTRICO e-J51 EV">AUTOMOVIL ELECTRICO e-J51 EV - $18.990</option>
+                <option value="T6 HFC 1037DEV 4X2 LUXURY GASOLINA">T6 HFC 1037DEV 4X2 LUXURY GASOLINA - $21.990</option>
+                <option value="T6 HFC1037DKT 4X2 INTER DIESEL">T6 HFC1037DKT 4X2 INTER DIESEL - $25.960</option>
+                <option value="T6 HFC1037DKST 4X4 LUXURY DIESEL">T6 HFC1037DKST 4X4 LUXURY DIESEL - $28.990</option>
+                <option value="T8 HFC 1037D3KT 4X2 LUXURY DIESEL">T8 HFC 1037D3KT 4X2 LUXURY DIESEL - $27.990</option>
+                <option value="T8 HFC 1037D3KST 4X4 LUXURY DIESEL">T8 HFC 1037D3KST 4X4 LUXURY DIESEL - $30.990</option>
+                <option value="T8 PRO HFC 1037D3KST 4X4 INTER DIESEL">T8 PRO HFC 1037D3KST 4X4 INTER DIESEL - $33.890</option>
+                <option value="T9 HFC1037D5K2TST INTER 4X4 TA DIESEL">T9 HFC1037D5K2TST INTER 4X4 TA DIESEL - $39.990</option>
+                <option value="T9 HFC1037D5K2TST LUXURY 4X4 TA DIESEL">T9 HFC1037D5K2TST LUXURY 4X4 TA DIESEL - $42.990</option>
+                <option value="MA V682R A/C 2.0 4P 4X2 DIESEL">MA V682R A/C 2.0 4P 4X2 DIESEL - $34.890</option>
+                <option value="HFC 6601K1H VAN SUNRAY 16+1 PAS">HFC 6601K1H VAN SUNRAY 16+1 PAS - $41.890</option>
+                <option value="HK 6700K4 COASTER 21 PAS TURISMO">HK 6700K4 COASTER 21 PAS TURISMO - $59.790</option>
+            </select>
+
+            <label for="entrada">Entrada (mínimo 20% del precio):</label>
+            <input type="number" id="entrada" name="entrada" required>
+
+            <label for="plazo">Plazo de Financiamiento (meses):</label>
+            <select id="plazo" name="plazo" required>
+                <option value="72">72 meses</option>
+                <option value="60">60 meses</option>
+                <option value="48">48 meses</option>
+                <option value="36">36 meses</option>
+            </select>
+
+            <div class="tipo-cliente">
+                <button type="button" onclick="seleccionarTipoCliente('dependiente')">Dependiente</button>
+                <button type="button" onclick="seleccionarTipoCliente('independiente')">Independiente</button>
+                <button type="button" onclick="seleccionarTipoCliente('ambos')">Ambos</button>
+            </div>
+
+            <button type="button" onclick="calcularFinanciamiento()">Financiamiento Automotriz</button>
+            <button type="button" onclick="calcularTarjetaCredito()">Consultar Cotización con Tarjeta de Crédito</button>
+        </form>
+
+        <div id="resultado" class="result"></div>
+
+        <div id="letraManualContainer" class="letra-manual" style="display: none;">
+            <label for="letraManual">Ajustar cuota manualmente:</label>
+            <input type="number" id="letraManual" name="letraManual">
+            <button type="button" onclick="actualizarLetraManual()">Actualizar Letra</button>
+        </div>
+
+        <div class="toggle-container">
+            <span class="toggle-label">Incluir tarjeta de crédito en PDF:</span>
+            <label class="toggle-switch">
+                <input type="checkbox" id="incluirTarjetaCredito">
+                <span class="toggle-slider"></span>
+            </label>
+        </div>
+
+        <div id="creditResult" class="result">
+            <h2>Cotización con Tarjeta de Crédito</h2>
+            <table class="credit-table">
+                <thead>
+                    <tr>
+                        <th>Plazo (meses)</th>
+                        <th>Cuota Mensual</th>
+                    </tr>
+                </thead>
+                <tbody id="creditTableBody">
+                    <!-- Aquí se llenarán las cuotas con tarjeta de crédito -->
+                </tbody>
+            </table>
+        </div>
+
+        <button type="button" onclick="generarPDF()">Imprimir Cotización en PDF</button>
+        <button type="button" onclick="generarPreAprobacion()">Imprimir Pre-Aprobación</button>
+        <button type="button" onclick="mostrarModalWhatsApp()">Enviar Cotización por WhatsApp</button>
+        
+        <!-- Nuevo botón añadido aquí -->
+        <button type="button" onclick="solicitarCredito()" class="btn-solicitud-credito">Solicitud de Credito</button>
+
+        <div class="advisor-info">
+            <p><strong>Asesor Comercial:</strong> Gino Lalama</p>
+            <p><strong>Teléfono:</strong> 0989936569</p>
+            <p><strong>Email:</strong> glalama@gruporoldan.com.ec</p>
+        </div>
+    </div>
+
+    <!-- Modal para WhatsApp -->
+    <div id="whatsappModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="cerrarModalWhatsApp()">&times;</span>
+            <h3>Enviar cotización por WhatsApp</h3>
+            <label>Número de teléfono:</label>
+            <div class="phone-input">
+                <span class="phone-prefix">+593</span>
+                <input type="text" id="whatsappNumber" placeholder="Ej: 987654321" required>
+            </div>
+            <div class="modal-buttons">
+                <button type="button" onclick="cerrarModalWhatsApp()">Cancelar</button>
+                <button type="button" onclick="enviarWhatsApp()">Enviar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const precios = {
+            "X 50 MT": 18990,
+            "X 70 MT I 2025": 22890,
+            "X70 MT II 2025": 25690,
+            "X70 AT II 2025": 26790,
+            "PLUS MT 2025": 30990,
+            "PLUS MT Sport 2025": 31390,
+            "PLUS 6 DCT 1.5 2025": 32990,
+            "PLUS 7 DCT 1.6 2023": 37890,
+            "DASHING MT I 2024": 26790,
+            "DASHING MT II 2025": 28790,
+            "DASHING 6DCT 2024": 30890,
+            "DASHING 6DCT 2025": 30890,
+            "DASHING 7DCT 2024": 37890,
+            "T2": 53990,
+            "T2 PLOMO MATTE": 54990,
+            "T2 DAKAR EDITION": 55990,
+            "KARRY 11 pax 2025": 13890,
+            "KARRY Mini Truck CS 25": 16890,
+            "KARRY Mini Truck CD 25": 17890,
+            "AUTOMOVIL ELECTRICO e-J51 EV": 18990,
+            "T6 HFC 1037DEV 4X2 LUXURY GASOLINA": 21990,
+            "T6 HFC1037DKT 4X2 INTER DIESEL": 25960,
+            "T6 HFC1037DKST 4X4 LUXURY DIESEL": 28990,
+            "T8 HFC 1037D3KT 4X2 LUXURY DIESEL": 27990,
+            "T8 HFC 1037D3KST 4X4 LUXURY DIESEL": 30990,
+            "T8 PRO HFC 1037D3KST 4X4 INTER DIESEL": 33890,
+            "T9 HFC1037D5K2TST INTER 4X4 TA DIESEL": 39990,
+            "T9 HFC1037D5K2TST LUXURY 4X4 TA DIESEL": 42990,
+            "MA V682R A/C 2.0 4P 4X2 DIESEL": 34890,
+            "HFC 6601K1H VAN SUNRAY 16+1 PAS": 41890,
+            "HK 6700K4 COASTER 21 PAS TURISMO": 59790
+        };
+
+        const enlacesModelos = {
+            "X 50 MT": "https://www.jetourecuador.com/x50",
+            "X 70 MT I 2025": "https://jetourglobal.com/x70-720/",
+            "X70 MT II 2025": "https://jetourglobal.com/x70-720/",
+            "X70 AT II 2025": "https://jetourglobal.com/x70-720/",
+            "PLUS MT 2025": "https://jetourglobal.com/x70Plus-720/",
+            "PLUS MT Sport 2025": "https://jetourglobal.com/x70Plus-720/",
+            "PLUS 6 DCT 1.5 2025": "https://jetourglobal.com/x70Plus-720/",
+            "PLUS 7 DCT 1.6 2023": "https://jetourglobal.com/x70Plus-720/",
+            "DASHING MT I 2024": "https://jetourglobal.com/JETOUR-DASHING-720/",
+            "DASHING MT II 2025": "https://jetourglobal.com/JETOUR-DASHING-720/",
+            "DASHING 6DCT 2024": "https://jetourglobal.com/JETOUR-DASHING-720/",
+            "DASHING 6DCT 2025": "https://jetourglobal.com/JETOUR-DASHING-720/",
+            "DASHING 7DCT 2024": "https://jetourglobal.com/JETOUR-DASHING-720/",
+            "T2": "https://jetourglobal.com/T2-720/",
+            "T2 PLOMO MATTE": "https://jetourglobal.com/T2-720/",
+            "T2 DAKAR EDITION": "https://jetourglobal.com/T2-720/",
+            "KARRY 11 pax 2025": "https://www.jetourecuador.com",
+            "KARRY Mini Truck CS 25": "https://www.jetourecuador.com",
+            "KARRY Mini Truck CD 25": "https://www.jetourecuador.com",
+            "AUTOMOVIL ELECTRICO e-J51 EV": "https://www.jetourecuador.com",
+            "T6 HFC 1037DEV 4X2 LUXURY GASOLINA": "https://www.jetourecuador.com",
+            "T6 HFC1037DKT 4X2 INTER DIESEL": "https://www.jetourecuador.com",
+            "T6 HFC1037DKST 4X4 LUXURY DIESEL": "https://www.jetourecuador.com",
+            "T8 HFC 1037D3KT 4X2 LUXURY DIESEL": "https://www.jetourecuador.com",
+            "T8 HFC 1037D3KST 4X4 LUXURY DIESEL": "https://www.jetourecuador.com",
+            "T8 PRO HFC 1037D3KST 4X4 INTER DIESEL": "https://www.jetourecuador.com",
+            "T9 HFC1037D5K2TST INTER 4X4 TA DIESEL": "https://www.jetourecuador.com",
+            "T9 HFC1037D5K2TST LUXURY 4X4 TA DIESEL": "https://www.jetourecuador.com",
+            "MA V682R A/C 2.0 4P 4X2 DIESEL": "https://www.jetourecuador.com",
+            "HFC 6601K1H VAN SUNRAY 16+1 PAS": "https://www.jetourecuador.com",
+            "HK 6700K4 COASTER 21 PAS TURISMO": "https://www.jetourecuador.com"
+        };
+
+        let tipoClienteSeleccionado = null;
+        let cuotaCalculada = 0;
+        let cuotaActual = 0;
+        let modeloActual = "";
+        let nombreActual = "";
+        let incluirTarjetaCredito = false;
+
+        document.getElementById('incluirTarjetaCredito').addEventListener('change', function() {
+            incluirTarjetaCredito = this.checked;
+        });
+
+        function seleccionarTipoCliente(tipo) {
+            if (tipoClienteSeleccionado === tipo) {
+                tipoClienteSeleccionado = null;
+                document.querySelector(`.tipo-cliente button[onclick="seleccionarTipoCliente('${tipo}')"]`).classList.remove('selected');
+            } else {
+                const botones = document.querySelectorAll('.tipo-cliente button');
+                botones.forEach(boton => {
+                    boton.classList.remove('selected');
+                });
+                
+                tipoClienteSeleccionado = tipo;
+                document.querySelector(`.tipo-cliente button[onclick="seleccionarTipoCliente('${tipo}')"]`).classList.add('selected');
+            }
+        }
+
+        function calcularFinanciamiento() {
+            const nombre = document.getElementById('nombre').value;
+            const cedula = document.getElementById('cedula').value;
+            const celular = document.getElementById('celular').value;
+            const modelo = document.getElementById('modelo').value;
+            const entrada = parseFloat(document.getElementById('entrada').value);
+            const plazo = parseInt(document.getElementById('plazo').value);
+
+            if (nombre && cedula && celular && modelo && !isNaN(entrada) && tipoClienteSeleccionado) {
+                const precio = precios[modelo];
+                const entradaMinima = precio * 0.20;
+
+                if (entrada < entradaMinima) {
+                    alert(`La entrada mínima es $${entradaMinima.toFixed(2)}.`);
+                    return;
+                }
+
+                const saldoFinanciar = precio - entrada;
+                const cuotaBase = saldoFinanciar / plazo;
+                cuotaCalculada = (cuotaBase * 1.33) + 120 + 25;
+                cuotaActual = cuotaCalculada;
+                modeloActual = modelo;
+                nombreActual = nombre;
+
+                document.getElementById('resultado').innerHTML = `
+                    <h2>Resultado de la Cotización</h2>
+                    <p><strong>Nombre:</strong> ${nombre}</p>
+                    <p><strong>Cédula:</strong> ${cedula}</p>
+                    <p><strong>Celular:</strong> ${celular}</p>
+                    <p><strong>Modelo:</strong> ${modelo}</p>
+                    <p><strong>Precio Total:</strong> $${precio}</p>
+                    <p><strong>Entrada:</strong> $${entrada.toFixed(2)}</p>
+                    <p><strong>Saldo a Financiar:</strong> $${saldoFinanciar.toFixed(2)}</p>
+                    <p><strong>Plazo:</strong> ${plazo} meses</p>
+                    <p><strong>Cuota Mensual:</strong> $${cuotaCalculada.toFixed(2)}</p>
+                    <div class="comment">
+                        <p>Incluye Seguro por 1 año y rastreo por 1 año. Dependiendo de la financiera o banco, podría variar el tiempo de estos servicios y por ende varían los valores de la letra.</p>
+                    </div>
+                `;
+
+                // Mostrar campo para ajuste manual
+                document.getElementById('letraManualContainer').style.display = 'block';
+                document.getElementById('letraManual').value = cuotaCalculada.toFixed(2);
+            } else {
+                alert('Por favor, complete todos los campos correctamente y seleccione el tipo de cliente.');
+            }
+        }
+
+        function actualizarLetraManual() {
+            const nuevaLetra = parseFloat(document.getElementById('letraManual').value);
+            if (!isNaN(nuevaLetra) && nuevaLetra > 0) {
+                cuotaActual = nuevaLetra;
+                const resultadoDiv = document.getElementById('resultado');
+                
+                // Reemplazar todo el contenido mostrando solo la cuota ajustada
+                resultadoDiv.innerHTML = resultadoDiv.innerHTML.replace(
+                    /<p><strong>Cuota Mensual:<\/strong> \$\d+\.\d{2}<\/p>/,
+                    `<p><strong>Cuota Mensual Ajustada:</strong> $${cuotaActual.toFixed(2)}</p>`
+                );
+                
+                alert('Cuota actualizada correctamente');
+            } else {
+                alert('Por favor ingrese un valor válido para la cuota');
+            }
+        }
+
+        function calcularTarjetaCredito() {
+            const modelo = document.getElementById('modelo').value;
+            const entrada = parseFloat(document.getElementById('entrada').value);
+
+            if (modelo && !isNaN(entrada)) {
+                const precio = precios[modelo];
+                const entradaMinima = precio * 0.20;
+
+                if (entrada < entradaMinima) {
+                    alert(`La entrada mínima es $${entradaMinima.toFixed(2)}.`);
+                    return;
+                }
+
+                const saldoFinanciar = precio - entrada;
+                const creditTableBody = document.getElementById('creditTableBody');
+                creditTableBody.innerHTML = '';
+
+                const plazosTarjeta = [12, 24, 36, 48, 60];
+                const interesTarjeta = 0.02;
+
+                plazosTarjeta.forEach(plazo => {
+                    const cuotaTarjeta = (saldoFinanciar * interesTarjeta) / (1 - Math.pow(1 + interesTarjeta, -plazo));
+                    creditTableBody.innerHTML += `
+                        <tr>
+                            <td>${plazo}</td>
+                            <td>$${cuotaTarjeta.toFixed(2)}</td>
+                        </tr>
+                    `;
+                });
+            } else {
+                alert('Por favor, complete todos los campos correctamente.');
+            }
+        }
+
+        function generarPDF(paraWhatsApp = false) {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            const nombre = document.getElementById('nombre').value;
+            const cedula = document.getElementById('cedula').value;
+            const celular = document.getElementById('celular').value;
+            const modelo = document.getElementById('modelo').value;
+            const entrada = parseFloat(document.getElementById('entrada').value);
+            const plazo = parseInt(document.getElementById('plazo').value);
+
+            if (nombre && cedula && celular && modelo && !isNaN(entrada) && tipoClienteSeleccionado) {
+                const precio = precios[modelo];
+                const entradaMinima = precio * 0.20;
+
+                if (entrada < entradaMinima) {
+                    alert(`La entrada mínima es $${entradaMinima.toFixed(2)}.`);
+                    return;
+                }
+
+                const saldoFinanciar = precio - entrada;
+
+                // Encabezado del PDF
+                doc.setFontSize(16);
+                doc.setFont("helvetica", "bold");
+                doc.setTextColor(211, 47, 47);
+                doc.text("GRUPO ROLDAN", 105, 15, { align: 'center' });
+
+                doc.setDrawColor(211, 47, 47);
+                doc.setLineWidth(0.5);
+                doc.line(10, 20, 200, 20);
+
+                doc.setFontSize(10);
+                doc.setFont("helvetica", "bold");
+                doc.setTextColor(0, 0, 0);
+                doc.text("Asesor Comercial: Gino Lalama | Teléfono: 0989936569 | Email: glalama@gruporoldan.com.ec", 105, 30, { align: 'center' });
+
+                doc.setDrawColor(128, 128, 128);
+                doc.setLineWidth(0.5);
+                doc.line(10, 35, 200, 35);
+
+                doc.setFontSize(10);
+                doc.setFont("helvetica", "bold");
+                doc.text("Información del Cliente", 10, 45);
+                doc.setFontSize(8);
+                doc.setFont("helvetica", "normal");
+                doc.text(`Nombre: ${nombre}`, 10, 55);
+                doc.text(`Cédula: ${cedula}`, 10, 65);
+                doc.text(`Celular: ${celular}`, 10, 75);
+                doc.text(`Modelo: ${modelo}`, 100, 55);
+                doc.text(`Precio Total: $${precio}`, 100, 65);
+                doc.text(`Entrada: $${entrada.toFixed(2)}`, 100, 75);
+
+                doc.setDrawColor(211, 47, 47);
+                doc.setLineWidth(0.5);
+                doc.line(10, 80, 200, 80);
+
+                doc.setFontSize(10);
+                doc.setFont("helvetica", "bold");
+                doc.text("Detalles de la Cotización (Crédito Automotriz)", 10, 90);
+                doc.setFontSize(8);
+                doc.setFont("helvetica", "normal");
+                doc.text(`Saldo a Financiar: $${saldoFinanciar.toFixed(2)}`, 10, 100);
+                doc.text(`Plazo: ${plazo} meses`, 10, 110);
+                
+                // Mostrar solo la cuota actual (calculada o ajustada)
+                if (cuotaActual !== cuotaCalculada) {
+                    doc.text(`Cuota Mensual Ajustada: $${cuotaActual.toFixed(2)}`, 100, 100);
+                } else {
+                    doc.text(`Cuota Mensual: $${cuotaActual.toFixed(2)}`, 100, 100);
+                }
+                
+                doc.text(`Incluye Seguro y Rastreo por 1 año`, 100, 110);
+
+                doc.setDrawColor(128, 128, 128);
+                doc.setLineWidth(0.5);
+                doc.line(10, 115, 200, 115);
+
+                doc.setFontSize(10);
+                doc.setFont("helvetica", "bold");
+                doc.text("Requisitos para el Financiamiento", 10, 125);
+                doc.setFontSize(8);
+                doc.setFont("helvetica", "normal");
+
+                const requisitosDependiente = [
+                    "- Certificado laboral con tiempo y sueldo",
+                    "- 3 últimos roles de pago",
+                    "- 3 últimos meses de movimientos de cuentas",
+                    "- Certificado bancario con cifras",
+                    "- Predio o matrícula de carro"
+                ];
+
+                const requisitosIndependiente = [
+                    "- Copia del R.U.C.",
+                    "- 3 últimas Declaraciones del I.V.A.",
+                    "- 1 Declaración última de la renta",
+                    "- 3 últimos movimientos de cuentas",
+                    "- Certificado bancario con cifras",
+                    "- Predio o matrícula de carro"
+                ];
+
+                const requisitosAmbos = [
+                    "- Certificado laboral con tiempo y sueldo",
+                    "- 3 últimos roles de pago",
+                    "- 3 últimos meses de movimientos de cuentas",
+                    "- Certificado bancario con cifras",
+                    "- Copia del R.U.C.",
+                    "- 3 últimas Declaraciones del I.V.A.",
+                    "- 1 Declaración última de la renta",
+                    "- Predio o matrícula de carro"
+                ];
+
+                let requisitos = [];
+                if (tipoClienteSeleccionado === 'dependiente') {
+                    requisitos = requisitosDependiente;
+                } else if (tipoClienteSeleccionado === 'independiente') {
+                    requisitos = requisitosIndependiente;
+                } else if (tipoClienteSeleccionado === 'ambos') {
+                    requisitos = requisitosAmbos;
+                }
+
+                let y = 135;
+                const mitad = Math.ceil(requisitos.length / 2);
+                for (let i = 0; i < mitad; i++) {
+                    doc.text(requisitos[i], 10, y);
+                    if (requisitos[i + mitad]) {
+                        doc.text(requisitos[i + mitad], 100, y);
+                    }
+                    y += 10;
+                }
+
+                doc.setDrawColor(211, 47, 47);
+                doc.setLineWidth(0.5);
+                doc.line(10, y + 5, 200, y + 5);
+
+                // Solo incluir tarjeta de crédito si está habilitado
+                const creditTableBody = document.getElementById('creditTableBody');
+                if (incluirTarjetaCredito && creditTableBody.innerHTML.trim() !== '') {
+                    doc.setFontSize(10);
+                    doc.setFont("helvetica", "bold");
+                    doc.text("Cotización con Tarjeta de Crédito", 10, y + 15);
+                    doc.setFontSize(8);
+                    doc.setFont("helvetica", "normal");
+
+                    const plazosTarjeta = [12, 24, 36, 48, 60];
+                    const interesTarjeta = 0.02;
+
+                    y += 25;
+                    plazosTarjeta.forEach(plazo => {
+                        const cuotaTarjeta = (saldoFinanciar * interesTarjeta) / (1 - Math.pow(1 + interesTarjeta, -plazo));
+                        doc.text(`Plazo: ${plazo} meses - Cuota Mensual: $${cuotaTarjeta.toFixed(2)}`, 10, y);
+                        y += 10;
+                    });
+
+                    doc.setDrawColor(128, 128, 128);
+                    doc.setLineWidth(0.5);
+                    doc.line(10, y + 5, 200, y + 5);
+                }
+
+                doc.setFontSize(10);
+                doc.setFont("helvetica", "bold");
+                doc.text("Dirección de la Empresa:", 105, y + 20, { align: 'center' });
+                doc.setFontSize(8);
+                doc.setFont("helvetica", "normal");
+                doc.text("Grupo Roldan / Jac-Jetour-Karry", 105, y + 30, { align: 'center' });
+                doc.text("Av. de las Américas y Justino Cornejo", 105, y + 40, { align: 'center' });
+
+                // Solo guardamos si no es para WhatsApp
+                if (!paraWhatsApp) {
+                    const nombreCliente = nombre.trim().replace(/\s+/g, '_');
+                    const modeloCliente = modelo.replace(/\s+/g, '_');
+                    doc.save(`Cotizacion_${nombreCliente}_${modeloCliente}.pdf`);
+                } else {
+                    return doc.output('datauristring');
+                }
+            } else {
+                alert('Por favor, complete todos los campos correctamente y seleccione el tipo de cliente antes de generar el PDF.');
+                return null;
+            }
+        }
+
+        function generarPreAprobacion() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            const nombre = document.getElementById('nombre').value;
+            const cedula = document.getElementById('cedula').value;
+            const celular = document.getElementById('celular').value;
+            const modelo = document.getElementById('modelo').value;
+            
+            if (!nombre || !cedula || !modelo || !tipoClienteSeleccionado) {
+                alert('Complete todos los campos y seleccione el tipo de cliente.');
+                return;
+            }
+
+            // Configuración inicial
+            const pageWidth = doc.internal.pageSize.getWidth();
+            const margin = 15;
+            const contentWidth = pageWidth - 2 * margin;
+            let yPosition = 20;
+            const lineHeight = 6;
+            const sectionGap = 8;
+
+            // Estilo corporativo
+            const primaryColor = [211, 47, 47]; // Rojo corporativo
+            const secondaryColor = [51, 51, 51]; // Gris oscuro
+            const lightColor = [119, 119, 119]; // Gris claro
+
+            // Encabezado ejecutivo
+            doc.setFillColor(...primaryColor);
+            doc.rect(0, 0, pageWidth, 15, 'F');
+            
+            doc.setFontSize(16);
+            doc.setFont("helvetica", "bold");
+            doc.setTextColor(255, 255, 255);
+            doc.text("GRUPO ROLDÁN", pageWidth / 2, 10, { align: 'center' });
+
+            // Logo (simulado)
+            doc.setFontSize(10);
+            doc.setTextColor(...lightColor);
+            doc.text("PRE-APROBACIÓN DE CRÉDITO", pageWidth / 2, 25, { align: 'center' });
+            
+            // Línea decorativa
+            doc.setDrawColor(...primaryColor);
+            doc.setLineWidth(0.5);
+            doc.line(margin, 30, pageWidth - margin, 30);
+
+            // Información del cliente - Estilo tarjeta
+            yPosition = 40;
+            doc.setFillColor(245, 245, 245);
+            doc.roundedRect(margin, yPosition, contentWidth, 30, 2, 2, 'F');
+            
+            doc.setFontSize(12);
+            doc.setFont("helvetica", "bold");
+            doc.setTextColor(...secondaryColor);
+            doc.text("INFORMACIÓN DEL CLIENTE", margin + 5, yPosition + 8);
+            
+            doc.setFontSize(10);
+            doc.setFont("helvetica", "normal");
+            doc.text(`Nombre: ${nombre.toUpperCase()}`, margin + 5, yPosition + 15);
+            doc.text(`Cédula: ${cedula}`, margin + 100, yPosition + 15);
+            doc.text(`Celular: ${celular}`, margin + 5, yPosition + 22);
+            doc.text(`Modelo: ${modelo}`, margin + 100, yPosition + 22);
+            
+            yPosition += 35;
+
+            // Detalles de pre-aprobación
+            doc.setFontSize(12);
+            doc.setFont("helvetica", "bold");
+            doc.setTextColor(...secondaryColor);
+            doc.text("DETALLES DE LA PRE-APROBACIÓN", margin, yPosition);
+            yPosition += 8;
+            
+            doc.setDrawColor(221, 221, 221);
+            doc.line(margin, yPosition, pageWidth - margin, yPosition);
+            yPosition += 10;
+            
+            doc.setFontSize(10);
+            doc.setFont("helvetica", "normal");
+            doc.setTextColor(...secondaryColor);
+            
+            const aprobacionText = [
+                `Estimado(a) ${nombre.split(' ')[0]}, nos complace informarle que su solicitud de crédito`,
+                `para el modelo ${modelo} ha sido pre-aprobada bajo los siguientes términos:`,
+                ``,
+                `• Cuota estimada: $${cuotaActual.toFixed(2)}`,
+                `• Validez: 7 días naturales`,
+                `• Reserva mínima requerida: $500 (reembolsable)`,
+                ``,
+                `Esta pre-aprobación está sujeta a verificación documental y análisis crediticio final.`
+            ];
+            
+            aprobacionText.forEach(line => {
+                if (line) {
+                    doc.text(line, margin, yPosition);
+                }
+                yPosition += lineHeight;
+            });
+            
+            yPosition += sectionGap;
+
+            // Requisitos en dos columnas
+            doc.setFontSize(12);
+            doc.setFont("helvetica", "bold");
+            doc.text("DOCUMENTACIÓN REQUERIDA", pageWidth / 2, yPosition, { align: 'center' });
+            yPosition += 10;
+            
+            doc.setFontSize(9);
+            doc.setFont("helvetica", "normal");
+            
+            const requisitosDependiente = [
+                "✓ Certificado laboral actualizado",
+                "✓ 3 últimos roles de pago",
+                "✓ Movimientos bancarios (3 meses)",
+                "✓ Certificado bancario con cifras",
+                "✓ Predio o matrícula vehicular"
+            ];
+
+            const requisitosIndependiente = [
+                "✓ Copia del R.U.C. actualizado",
+                "✓ 3 últimas declaraciones de IVA",
+                "✓ Última declaración de renta",
+                "✓ Movimientos bancarios (3 meses)",
+                "✓ Certificado bancario con cifras",
+                "✓ Predio o matrícula vehicular"
+            ];
+
+            let requisitos = tipoClienteSeleccionado === 'dependiente' ? requisitosDependiente : 
+                            tipoClienteSeleccionado === 'independiente' ? requisitosIndependiente : 
+                            [...requisitosDependiente, ...requisitosIndependiente];
+            
+            // Eliminar duplicados si es "ambos"
+            requisitos = [...new Set(requisitos)];
+            
+            const half = Math.ceil(requisitos.length / 2);
+            const col1 = requisitos.slice(0, half);
+            const col2 = requisitos.slice(half);
+            
+            // Columna 1
+            let tempY = yPosition;
+            col1.forEach(req => {
+                doc.text(req, margin + 5, tempY);
+                tempY += lineHeight;
+            });
+            
+            // Columna 2
+            tempY = yPosition;
+            col2.forEach(req => {
+                doc.text(req, margin + 100, tempY);
+                tempY += lineHeight;
+            });
+            
+            yPosition = Math.max(yPosition + (col1.length * lineHeight), yPosition + (col2.length * lineHeight)) + sectionGap;
+
+            // Nota importante
+            doc.setFontSize(9);
+            doc.setFont("helvetica", "italic");
+            doc.setTextColor(...lightColor);
+            
+            const notaText = [
+                "NOTA: Esta pre-aprobación no constituye una aprobación definitiva. Los términos finales",
+                "estarán sujetos al análisis de documentación y políticas de la entidad financiera.",
+                "El valor de la cuota podrá variar según el resultado del análisis crediticio final."
+            ];
+            
+            notaText.forEach(line => {
+                doc.text(line, margin, yPosition);
+                yPosition += lineHeight;
+            });
+            
+            yPosition += sectionGap;
+
+            // Firmas
+            const firmaY = 250;
+            doc.setDrawColor(204, 204, 204);
+            doc.line(margin, firmaY, pageWidth / 2 - 10, firmaY);
+            doc.line(pageWidth / 2 + 10, firmaY, pageWidth - margin, firmaY);
+            
+            doc.setFontSize(9);
+            doc.setFont("helvetica", "bold");
+            doc.setTextColor(...secondaryColor);
+            doc.text("FIRMA DEL CLIENTE", margin + 40, firmaY + 10);
+            doc.text("FIRMA AUTORIZADA", pageWidth / 2 + 40, firmaY + 10);
+            
+            // Pie de página ejecutivo
+            doc.setFontSize(8);
+            doc.setFont("helvetica", "normal");
+            doc.setTextColor(...lightColor);
+            doc.text("Av. de las Américas y Justino Cornejo • Teléfono: (04) 500 2000", pageWidth / 2, 285, { align: 'center' });
+            doc.text("www.gruporoldan.com.ec • glalama@gruporoldan.com.ec", pageWidth / 2, 290, { align: 'center' });
+
+            // Fecha
+            const hoy = new Date();
+            const fecha = hoy.toLocaleDateString('es-EC', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+            doc.text(`Fecha de emisión: ${fecha}`, margin, 280);
+
+            // Guardar el PDF
+            const nombreCliente = nombre.trim().replace(/\s+/g, '_');
+            const modeloCliente = modelo.replace(/\s+/g, '_');
+            doc.save(`Preaprobacion_${nombreCliente}_${modeloCliente}.pdf`);
+        }
+
+        function mostrarModalWhatsApp() {
+            if (!nombreActual || !modeloActual || cuotaActual === 0) {
+                alert('Por favor genere una cotización primero');
+                return;
+            }
+            document.getElementById('whatsappModal').style.display = 'block';
+            document.getElementById('whatsappNumber').focus();
+        }
+        
+        function cerrarModalWhatsApp() {
+            document.getElementById('whatsappModal').style.display = 'none';
+        }
+        
+        function enviarWhatsApp() {
+            const numeroCliente = document.getElementById('whatsappNumber').value;
+            
+            if (!numeroCliente) {
+                alert('Por favor ingrese el número de teléfono del cliente');
+                return;
+            }
+            
+            // Limpiar el número (eliminar caracteres no numéricos)
+            const numeroLimpio = numeroCliente.replace(/\D/g, '');
+            
+            if (numeroLimpio.length < 8) {
+                alert('Por favor ingrese un número de teléfono válido (al menos 8 dígitos)');
+                return;
+            }
+            
+            // Formatear el número completo (593 + número local sin 0 inicial)
+            const telefonoCompleto = `593${numeroLimpio.startsWith('0') ? numeroLimpio.substring(1) : numeroLimpio}`;
+            
+            const enlaceModelo = enlacesModelos[modeloActual] || "https://www.jetourecuador.com";
+            const precio = precios[modeloActual];
+            const entrada = document.getElementById('entrada').value || (precio * 0.2).toFixed(2);
+            const plazo = document.getElementById('plazo').value || "72";
+            
+            // Generamos el mensaje
+            let mensaje = `Hola, te saluda Gino Lalama, Asesor Comercial de Jetour Grupo Roldán.\n\n`;
+            mensaje += `Aquí está la cotización que solicitaste:\n\n`;
+            mensaje += `📌 *Modelo:* ${modeloActual}\n`;
+            mensaje += `💰 *Precio:* $${precio}\n`;
+            mensaje += `🤑 *Entrada:* $${entrada}\n`;
+            mensaje += `⏳ *Plazo:* ${plazo} meses\n`;
+            mensaje += `📅 *Cuota estimada:* $${cuotaActual.toFixed(2)}\n\n`;
+            mensaje += `Puedes ver más detalles del vehículo aquí:\n${enlaceModelo}\n\n`;
+            mensaje += `Estoy a tu disposición para cualquier consulta o para agendar una prueba de manejo.\n\n`;
+            mensaje += `¡Gracias por preferir Jetour Ecuador!`;
+            
+            // Codificamos el mensaje para URL
+            const mensajeCodificado = encodeURIComponent(mensaje);
+            
+            // Abrimos WhatsApp con el mensaje
+            window.open(`https://wa.me/${telefonoCompleto}?text=${mensajeCodificado}`, '_blank');
+            
+            // Cerramos el modal
+            cerrarModalWhatsApp();
+        }
+
+        // Nueva función añadida para solicitud de crédito
+        function solicitarCredito() {
+            window.open("https://cdpn.io/pen/debug/RNwEOwb?authentication_hash=XBkGRWQEdOPA", "_blank");
+        }
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</body>
+</html>
